@@ -162,7 +162,7 @@ difftime(today, real_dates, units = "hours")
 
 The lubridate package contains a powerful set of tools that can be used to extract and interact with dates.
 
-There are functions like *mdy* that allow for simpler extration of date information from strings.
+There are functions like *mdy* that allow for simpler extraction of date information from strings.
 ```{r}
 #install.packages("lubridate")
 library(lubridate, quietly = TRUE)
@@ -203,7 +203,7 @@ which(star$classtype == 'small')  # reports indicies
 which(star$reading > 600)
 ```
 
-Use indices to select rows w/ selected columns                                              
+Use indices to select rows w/ selected columns                                        
 ```{r}
 star[which(star$classtype == 'small'), c('classtype', 'reading')]
 ```
@@ -402,7 +402,7 @@ With MARGIN = 2, apply calculates the *mean* over columns.
 apply(star[, 2:3], MARGIN = 2, FUN = mean)
 ```
 
-Apply sd() across numeric nutrition variables in the star dataset      
+Apply sd() across numeric nutrition variables in the star dataset
 ```{r}
 lapply(star[, 2:3], sd)
 sapply(star[, 2:3], sd)
@@ -506,7 +506,7 @@ addTwoNums(3, 4)
 ```
 
 
-Multiple results to report 
+Multiple results to report
 
 ```{r}
 myOperations <- function(a, b) {
@@ -524,7 +524,7 @@ myOperations(5, 10)
 
 ## Extra Materials
 
-Graph a function 
+Graph a function
 ```{r}
 f <- function(x) (x ^ 3 - 13)
 
@@ -548,7 +548,7 @@ my_ttest <- function(x, mu = 0, test = "two-sided", alpha = 0.05) {
   n <- length(x)
   df <- n - 1
   std <- sqrt(var(x))
-  t <- sqrt(n) * (mean(x) - mu) / std  
+  t <- sqrt(n) * (mean(x) - mu) / std
   tail_area <- switch(test, "two-sided" = 2 * (1 - pt(abs(t), n - 1)),
                       lower = pt(abs(t), df), upper = 1 - pt(abs(t), df))
   list(t.statistics = t, degree.freedom = df, p.value = tail_area)
@@ -590,7 +590,7 @@ Create a function that produces a data frame that contains the classtype of the 
 
 ### Final Exercise
 
-- Read in the anes data set and identify missing values
+- Read in the ANES data set and identify missing values
 - Create a subset that removes those missing values
 - Calculate the average age within each state
 
@@ -658,7 +658,7 @@ while(univ[i] != "Rutgers") {
 }
 ```
 
-Create a fuction with a while loop 
+Create a function with a while loop 
 ```{r}
 univ_while <- function(x) {
   i <- 1
