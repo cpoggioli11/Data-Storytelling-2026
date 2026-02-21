@@ -1,0 +1,55 @@
+---
+title: "Analysis in R"
+author: "Patrick Chester: Professor at SIT"
+date: 'Last Updated: February 8th, 2026'
+format: pdf
+---
+
+
+## VII. Hypothesis Testing
+
+### Chi-square Test
+```{r collapse = TRUE}
+chisq.test(health$gender, health$age_cat)
+
+summary(table(health$gender, health$age_cat))
+```
+
+### T-tests
+Just by changing the arguments within the *'t.test'* function, we can run a one sample t-test, an independent t-test and a paired t-test. 
+```{r collapse = TRUE}
+t.test(health$health_sum, mu=3)
+
+t.test(health_sum ~ gender, data = health)
+
+t.test(health$food, health$smoke, paired = TRUE) 
+```
+
+You can access different parts of the output that are stored, such as the t-statistic or p-value.
+```{r collapse = TRUE}
+my_ttest <- t.test(health$food, health$smoke, paired = TRUE) 
+summary(my_ttest)
+
+my_ttest$statistic
+```
+
+### Linear Regression Model
+
+When you run a regression model, you should save the results to an lm object through use of the assignment statement. This way you will be able to access different parts of the results later on.
+```{r collapse = TRUE}
+lm_health <- lm(health_sum ~ age + gender, data = health)
+summary(lm_health)
+
+confint(lm_health)
+```
+
+```{r collapse = TRUE}
+par(mfrow = c(2, 2))
+plot(lm_health)
+```
+
+### ANOVA 
+```{r}
+aov_health <- aov(health_sum ~ state + gender, data = health)
+summary(aov_health)
+```
