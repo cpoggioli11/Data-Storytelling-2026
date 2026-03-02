@@ -7,13 +7,12 @@
 ## Set the working directory
 ## (delete the lines of code that are not for your computer, and
 ##  if using Windows, replace "username" with your own username)
-setwd("~/Documents/DSS") # if Mac
-setwd("C:/Users/username/Desktop/DSS") # if Windows
-setwd("/cloud/project/DSS") # if in the cloud
+setwd("~/Documents/data") # if Mac
+setwd("C:/Users/username/Desktop/data") # if Windows
+setwd("/cloud/project/data") # if in the cloud
 setwd("~/Dropbox/SIT/SIT_Classes/Public_Pages/Data-Storytelling-2026/data/") # My directory
 
 library(dplyr) # loads dplyr package for data manipulation
-library(labelled) # loads labelled package for working with labelled data
 ## Load the dataset
 anes <- read.csv("anes_data_2020_big.csv") # reads and stores data
 
@@ -71,7 +70,7 @@ prop.table(table(anes$vote)) # creates table of proportions
 table(anes$educ_4, exclude=NULL) # table() including NAs
 mean(anes$vote) # mean() without removing NAs
 mean(anes$vote, na.rm=TRUE) # mean() removing NAs
-anes1 <- na.omit(anes) # removes observations with NAs
+anes1 <- na.omit(anes[, c("educ_4", "educ_4_labeled", "age", "vote", "state")]) # removes observations with NAs
 head(anes) # shows first observations of original dataframe
 head(anes1) # shows first observations of clean dataframe
 dim(anes) # provides dimensions (rows, columns) of original dataframe
@@ -108,11 +107,11 @@ sd(anes1$age[anes1$vote==1])^2 # square of sd of age for Trump supporters
 sqrt(var(anes1$age[anes1$vote==1])) # square root of variance of age for Trump supporters
 
 
-## Scatter plot
+## Table of Higher education vs Vote Choice
 
 anes1$high_education <- ifelse(anes1$educ_4 == 4, 1, 0) # creates binary variable for high education: 1 for college or advanced degree, 0 for less than college
 
-table(anes1$high_education, anes1$vote) # scatter plot X, Y
+prop.table(table(anes1$high_education, anes1$vote), margin = 2) # table
 
 ## Correlation
 cor(anes1$high_education, anes1$vote) # calculates correlation between X and Y
@@ -155,6 +154,14 @@ sample_means_50 <- sample_means_function(anes1_var, n=50, num_samples=1000)
 hist(sample_means_50) # creates histogram of sample means
 abline(v=mean(anes1_var), col="red") # adds vertical line for population mean
 abline(v=mean(sample_means_50), col="blue") # adds vertical line for population mean
+
+# Sample 250
+
+sample_means_250 <- sample_means_function(anes1_var, n=250, num_samples=1000) 
+
+hist(sample_means_250) # creates histogram of sample means
+abline(v=mean(anes1_var), col="red") # adds vertical line for population mean
+abline(v=mean(sample_means_250), col="blue") # adds vertical line for population mean
 
 
 ### Sampling Bias 
