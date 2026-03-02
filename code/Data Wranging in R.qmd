@@ -2,7 +2,7 @@
 title: "Data Wrangling in R"
 author: "Patrick Chester"
 date: '`r format(Sys.time(), "%d %B, %Y")`'
-output: pdf_document
+format: pdf
 ---
 
 What is Data Wrangling?
