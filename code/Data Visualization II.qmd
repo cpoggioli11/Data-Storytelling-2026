@@ -1,0 +1,224 @@
+---
+title: "Data Visualization II: Advanced Graphics"
+author: "Patrick Chester"
+date: '`r format(Sys.time(), "%B %d %Y")`'
+format: html
+---
+
+# I. Time Series -
+
+You will oftentimes find yourself needing to visualize data across time. Time series data is a sequence of data points collected at regular time intervals. 
+- Examples include stock prices, weather data, and economic indicators.
+
+Loading data and packages:
+```{r}
+library(ggplot2)
+
+head(economics)
+```
+The `economics` dataset contains monthly data on the US economy from 1967 to 2015 sourced from the US FED. Below is a description of the variables in the dataset:
+
+| Variable | Description |
+| --- | --- |
+| date | Date of observation (months) |
+| pce | personal consumption expenditures, in billions of dollars |
+| pop | total population, in thousands |
+| psavert | personal savings rate |
+| uempmed | median duration of unemployment, in weeks |
+| unemploy | number of unemployed in thousands |
+
+
+Generally, you will need to use a line graph to visualize time series data.
+
+```{r}
+ggplot(economics, aes(x = date, y = psavert)) +
+  geom_line() +
+  labs(title = "Personal Savings Rate",
+       x = "Date",
+       y = "Personal Savings Rate") +
+  theme_minimal()
+```
+*Credit:* [Professor Rob Kabacoff](https://rkabacoff.github.io/datavis/about-the-author.html)
+
+## Aggregating Time Series Data
+
+However, you will need to pick a time interval that makes the most sense for your data. For example, if you are looking at stock prices, you may want to use daily or weekly intervals. If you are looking at macro economic indicators, you may want to use monthly or quarterly intervals.
+
+Let's summarize our data to the year level
+
+```{r}
+
+library(dplyr)
+economics_yearly <- economics |>
+  group_by(year = as.integer(format(date, "%Y"))) |>
+  summarize(psavert = mean(psavert, na.rm = TRUE))
+
+head(economics_yearly)
+```
+
+```{r}
+ggplot(economics_yearly, aes(x = year, y = psavert)) +
+  geom_line() +
+  labs(title = "Personal Savings Rate (Yearly Average)",
+       x = "Year",
+       y = "Personal Savings Rate") +
+  theme_minimal()
+```
+
+## Changing date labels
+
+```{r}
+library(scales)
+ggplot(economics, aes(x = date, y = psavert)) +
+  geom_line(color = "indianred3", 
+            size=1 ) +
+  geom_smooth() +
+  scale_x_date(date_breaks = '5 years', 
+               labels = date_format("%b-%y")) +
+  labs(title = "Personal Savings Rate",
+       subtitle = "1967 to 2015",
+       x = "",
+       y = "Personal Savings Rate") +
+  theme_minimal() 
+```
+
+## Multivariate time series
+
+```{r}
+# multivariate time series
+
+# one time install
+# install.packages("quantmod")
+
+library(quantmod)
+library(dplyr)
+library(lubridate)
+# get apple (AAPL) closing prices
+apple <- getSymbols("AAPL", 
+                    return.class = "data.frame", 
+                    from="2023-01-01")
+
+repeat_rows_apple <- grep("\\.1$", row.names(AAPL))
+
+apple <- AAPL |> 
+    slice(-repeat_rows_apple) |> 
+    mutate(Date = row.names(AAPL)[-repeat_rows_apple] |>
+        gsub(pattern = "X", replacement = "", x = _) |> 
+            ymd()) |> 
+    select(Date, AAPL.Close) |> 
+    rename(Close = AAPL.Close) |> 
+    mutate(Company = "Apple")
+#
+## get Meta (META) closing prices
+meta <- getSymbols("META", 
+                   return.class = "data.frame", 
+                   from="2023-01-01")
+
+repeat_rows_meta <- grep("\\.1$", row.names(META))
+
+meta <- META |> 
+    slice(-repeat_rows_meta) |> 
+    mutate(Date = row.names(META)[-repeat_rows_meta] |>
+        gsub(pattern = "X", replacement = "", x = _) |> 
+            ymd()) |>   
+  select(Date, META.Close) |> 
+  rename(Close = META.Close) |> 
+  mutate(Company = "Meta")
+#
+## combine data for both companies
+mseries <- rbind(apple, meta)
+
+# plot data
+ggplot(mseries, 
+       aes(x=Date, y= Close, color=Company)) + 
+  geom_line(size=1) +
+  scale_x_date(date_breaks = '6 month', 
+               labels = scales::date_format("%b-%y")) +
+  scale_y_continuous(limits = c(100, 800), 
+                     breaks = seq(100, 800, 100),
+                     labels = scales::dollar) +
+  labs(title = "NASDAQ Closing Prices",
+       subtitle = "Jan 2023 - Today",
+       caption = "source: Yahoo Finance",
+       y = "Closing Price") +
+  theme_minimal() +
+  scale_color_brewer(palette = "Dark2") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+```
+
+
+## Area Charts
+
+Area charts are useful for showing how groups change over another dimension (usually time).
+
+A basic area chart
+
+```{r}
+# basic area chart
+ggplot(economics, aes(x = date, y = unemploy)) +
+  geom_area(fill="lightblue", color="black") +
+  labs(title = "US Unemployed Population (1967-2015)",
+       x = "Date",
+       y = "Unemployment (People)") + 
+    theme_minimal()
+```
+
+Why is it going up over time?
+
+```{r}
+# stacked area chart
+data(uspopage, package = "gcookbook")
+ggplot(uspopage, aes(x = Year,
+                     y = Thousands/1000, 
+                     fill = forcats::fct_rev(AgeGroup))) +
+  geom_area(color = "black") +
+  labs(title = "US Population by age",
+       subtitle = "1900 to 2002",
+       caption = "source: U.S. Census Bureau, 2003, HS-3",
+       x = "Year",
+       y = "Population in Millions",
+       fill = "Age Group") +
+  scale_fill_brewer(palette = "Set2") +
+  theme_minimal()
+```
+
+
+## Exercise
+
+1. Pick a company of your choice and look up the company code
+2. Extract data for that company (2023 to present) and clean it using the example code above
+3. Combine it with either Apple, Meta, or another company of your choosing
+4. Compare the growth of both companies over time
+
+
+# II. Statistical Modeling
+
+
+```{r}
+data(SaratogaHouses, package="mosaicData")
+
+# select numeric variables
+df <- dplyr::select_if(SaratogaHouses, is.numeric)
+
+# calulate the correlations
+r <- cor(df, use="complete.obs")
+round(r,2)
+```
+
+```{r}
+library(ggplot2)
+library(ggcorrplot)
+ggcorrplot(r)
+```
+
+# III. Making Tables
+
+
+# IV. Interactive Visualizations
+
+
+(see Shiny app R)
+
+# V. Creating your own theme
+
+
