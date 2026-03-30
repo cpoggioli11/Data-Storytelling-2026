@@ -134,7 +134,6 @@ html <- minimal_html("<body>
   This is
   a
   paragraph.</p><p>This is another paragraph.
-  
   It has two sentences.</p>
 ")
 ```
@@ -282,6 +281,12 @@ title <- films |>
 title
 ```
 
+### Exercise 1
+
+1. Get the release date for each film
+2. Clean the release date information and convert it to a date
+
+
 ## Wikipedia GDP
 
 One popular source of HTML encoded data is Wikipedia. Wikipedia tables are quite easy to collect using rvest, as the example below illustrates.
@@ -300,5 +305,10 @@ gdp_table
 
 What needs to be done to clean this data?
 
+### Exercise 2
+
+1. Get first 20 links from George Washington's Wikipedia page: https://en.wikipedia.org/wiki/George_Washington
+2. Use selector to get the table of George Washington's bibliographic data
+3. Filter the table to identify his birth date
 
 
