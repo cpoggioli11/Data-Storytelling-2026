@@ -224,6 +224,12 @@ html |>
 
 ### Element vs Elements
 
+If your goal is to build a data frame, you will want to extract not just elements that are present, but also those that are *missing*. I.e., missing values in tables. To that end, there is an important distinction between html_element vs html_elements:
+
+- `html_element`: extracts elements that are *present* in the html
+- `html_elements`: will include missing values for missing elements (useful for tables)
+
+
 ```{r}
 html <- minimal_html("
   <ul>
@@ -278,15 +284,21 @@ title
 
 ## Wikipedia GDP
 
+One popular source of HTML encoded data is Wikipedia. Wikipedia tables are quite easy to collect using rvest, as the example below illustrates.
 
 ```{r}
 gdp <- read_html("https://en.wikipedia.org/wiki/List_of_countries_by_GDP_sector_composition")
 ```
 
 ```{r}
-gdp |>
+gdp_table <- gdp |>
   html_node("table") |>
   html_table()
+
+gdp_table
 ```
+
+What needs to be done to clean this data?
+
 
 
