@@ -2,7 +2,6 @@
 # Lecture: Text as Data
 # Date: 3/29/2017
 # Preprocessing, Weighting, and Naive Bayes
-
 rm(list = ls())
 
 # Load Quanteda
@@ -56,19 +55,20 @@ last_speech_text <- data_corpus_sotu[ndocs]
 
 # The DFM function creates a Document Feature Matrix from the last SOTU speech
 
-obama_dfm <- dfm(tokens(last_speech_text))
-head(obama_dfm)
+biden_dfm <- dfm(tokens(last_speech_text))
+head(biden_dfm)
 ?dfm
 
 # Inspecting the components of a DFM object
 
-str(obama_dfm)
+str(biden_dfm)
+docvars(biden_dfm)
 
-obama_dfm[1,1:20]
+biden_dfm[1,1:20]
 
 # The topfeatures function by default shows the most frequently occuring terms in a given DFM
 
-topfeatures(obama_dfm)
+topfeatures(biden_dfm)
 
 # Are all of these features relevant?
 
@@ -85,19 +85,19 @@ c(stopwords("english"), "will")
 
 # Here we compare a DFM from the last SOTU while without English stopwords with one that has them
 
-obama_dfm1 <- last_speech_text |>
+biden_dfm1 <- last_speech_text |>
   tokens(remove_punct = TRUE) |>
   dfm()
 
-obama_dfm2 <- last_speech_text |>
+biden_dfm2 <- last_speech_text |>
   tokens(remove_punct = TRUE) |>
   dfm() |>
   dfm_remove(pattern = stopwords("english"))
 
 
 
-topfeatures(obama_dfm1)
-topfeatures(obama_dfm2)
+topfeatures(biden_dfm1)
+topfeatures(biden_dfm2)
 
 ## 3 Visualization and Weighted DFM
 
@@ -188,6 +188,7 @@ no_s <- gsub(" s ", "",  data_corpus_sotu[s_index])
 
 # 1. Subset the data_corpus_inaugural corpus based on a keyword of interest to you using regular expressions
 # 2. Assess what two word collocations exist in that data, excluding combinations that include stopwords
+
 
 ## 1) Supervised Learning: Naive Bayes
 
