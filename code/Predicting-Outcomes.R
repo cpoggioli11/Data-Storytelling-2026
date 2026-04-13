@@ -8,10 +8,11 @@
 setwd("~/Desktop/DSS") # if Mac
 setwd("C:/Users/username/Desktop/DSS") # if Windows
 setwd("/cloud/project/DSS") # if in the cloud
-setwd("~/Dropbox/SIT/SIT_Classes/Public_Pages/Data-Storytelling-2026/data")
+setwd("~/GitHub/Data-Storytelling-2026/data")
 
 ## Load the dataset
-co <- read.csv("countries.csv") # reads and stores data
+
+co <- read.csv("countries.csv")
 
 ## Understand the data
 ## (Read about description of variables and unit of observation)
@@ -144,7 +145,7 @@ pred_test_bes <- predict(model_bes, newdata = test_bes, type = "response") # mak
 
 pred_test_bes_binary <- ifelse(pred_test_bes > 0.5, 1, 0) # converts probabilities to binary predictions
 
-confusion_matrix <- table(test_bes$leave, pred_test_bes_binary) # creates confusion matrix
+confusion_matrix <- table(test_bes$age, pred_test_bes_binary) # creates confusion matrix
 
 accuracy <- sum(diag(confusion_matrix)) / sum(confusion_matrix) # calculates accuracy
 
@@ -154,3 +155,30 @@ print(accuracy) # prints accuracy
 
 # - Fit a logistic regression model using education to predict whether a respondent voted to leave
 # - Calculate the accuracy of the model on the test set
+## Can we predict whether a respondent voted to leave with their age?
+
+train_index_bes <- sample(1:nrow(bes), size = 0.8*nrow(bes)) # creates index for training set
+
+plot(x=bes$education, y=bes$leave) # creates scatter plot
+
+train_bes <- bes[train_index_bes, ] # creates training set
+test_bes <- bes[-train_index_bes, ] # creates test set
+
+model_bes <- glm(leave ~ education, data = train_bes, family = binomial) # fits logistic regression model
+
+summary(model_bes) # shows summary of fitted model
+
+pred_test_bes <- predict(model_bes, newdata = test_bes, type = "response") # makes predictions on test set
+
+pred_test_bes_binary <- ifelse(pred_test_bes > 0.5, 1, 0) # converts probabilities to binary predictions
+
+confusion_matrix <- table(test_bes$education, pred_test_bes_binary) # creates confusion matrix
+print(confusion_matrix)
+
+accuracy <- sum(diag(confusion_matrix)) / sum(confusion_matrix) # calculates accuracy
+
+print(accuracy) # prints accuracy
+plot(x=bes$education, y=bes$leave)
+
+
+
